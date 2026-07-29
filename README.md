@@ -1,6 +1,6 @@
 # Combined LMI-Based Observer for Lur'e Systems
 
-> *"Observer design for Lur'e systems via injection of a reconstructed nonlinear output"* — submitted to Automatica.
+> *"Observer design for Lur'e systems via injection of a reconstructed nonlinear output."*
 
 ## Overview
 
@@ -74,7 +74,7 @@ Each `mode` works with `combined=True` (Theorem 1 / Remark 5) or `combined=False
 
 ### Aligned vs general $A$
 
-- **Aligned** ($CA = MC$, e.g. Wilson-Cowan with $A=-\lambda I$): the virtual output is $y_2 = CWS(V)$ only. Detected automatically.
+- **Aligned** ($CA = MC$): the virtual output is $y_2 = CWS(V)$ only. Detected automatically.
 - **General $A$**: the sliding-mode bank reconstructs the full $y_2 = CAV + CWS(V)$. Set `aligned=False` explicitly for non-aligned models.
 
 ## Repository structure
@@ -104,4 +104,4 @@ Reproduces Case 3 from the article: Wilson-Cowan network ($n=6$, $n_y=3$), sigmo
 
 ## Reference
 
-Annabi, A.M. *"Observer design for Lur'e systems via injection of a reconstructed nonlinear output."* Submitted to Automatica.
+Annabi, A.M. *"Observer design for Lur'e systems via injection of a reconstructed nonlinear output."* [arXiv:2606.24656](https://arxiv.org/abs/2606.24656).
