@@ -1,0 +1,55 @@
+% LMI Novel Observer — stacked signal-flow diagram: classical vs proposed
+% Usage: \input{Diagrams/lmi_novel_observer_stacked.tex}
+\begin{tikzpicture}[
+  scale=0.9,
+  node distance=1.5cm and 2cm,
+  block/.style = {draw, fill=BoxFillColor, rectangle, minimum height=2.5em, minimum width=2.8em, rounded corners, font=\footnotesize, align=center, inner sep=5pt},
+  arrow/.style = {draw, -{Latex[length=2mm]}, thick},
+  label/.style = {font=\footnotesize\itshape},
+]
+
+% ==================== TOP ROW: CLASSICAL ====================
+
+\node [block, fill=mDarkTeal!15] (sys1) {\textbf{System}};
+\node [block, fill=RoyalPurp!10, right=3cm of sys1] (luen1) {\textbf{Luenberger}\\ \textbf{Observer}};
+\node [right=1.5cm of luen1, font=\footnotesize\bfseries] (vhat1) {$\hat{V}$};
+
+\draw [arrow] (sys1) -- node[above, font=\footnotesize] {$y$} (luen1);
+\draw [arrow] (luen1) -- (vhat1);
+
+\node [label, RoyalPurp, above=0.25cm of $(sys1.north)!0.5!(luen1.north)$] {Classical};
+
+% ==================== BOTTOM ROW: PROPOSED (stacked) ====================
+
+\node [block, fill=mDarkTeal!15, below=2.5cm of sys1] (sys2) {\textbf{System}};
+
+% Observer 1 (top-right of System)
+\node [block, fill=orange!15, right=2.5cm of sys2, yshift=0.85cm] (homo) {\textbf{Observer 1}\\[2pt] {\small (virtual output)}};
+
+% Luenberger 2 (bottom-right, below Observer 1)
+\node [block, fill=RoyalPurp!10, right=2.5cm of sys2, yshift=-0.85cm] (luen2) {\textbf{Luenberger}\\ \textbf{Observer 2}};
+
+\node [right=1.5cm of luen2, font=\footnotesize\bfseries] (vhat2) {$\hat{V}$};
+
+% y from System → splits: up to Observer 1, down to Luenberger 2
+\coordinate (y-split) at ($(sys2.east)!0.5!(homo.west)$);
+\draw [arrow] (sys2) -- (y-split);
+\draw [arrow] (y-split) |- node[font=\footnotesize, pos=0.3, left] {$y$} (homo);
+\draw [arrow] (y-split) |- node[font=\footnotesize, pos=0.3, left] {$y$} (luen2);
+
+% ẑ₂ from Observer 1 → Luenberger 2 (downward)
+\draw [arrow] (homo.south) -- node[font=\footnotesize, right] {$\hat{z}_2$} (luen2.north);
+
+% V̂ output
+\draw [arrow] (luen2) -- (vhat2);
+
+\node [label, mDarkTeal, above=0.25cm of $(sys2.north)!0.5!(luen2.north)$] {Proposed};
+
+% ==================== DASHED BOX around Observer 1 ====================
+\begin{scope}[on background layer]
+  \node [draw=orange, densely dashed, rounded corners, inner sep=6pt,
+         fit=(homo),
+         label={[font=\footnotesize, orange]north west:{Virtual measurement}}] {};
+\end{scope}
+
+\end{tikzpicture}

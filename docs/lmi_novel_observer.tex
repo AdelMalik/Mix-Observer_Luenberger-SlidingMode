@@ -1,0 +1,55 @@
+% LMI Novel Observer — signal-flow diagram: classical vs proposed
+\begin{tikzpicture}[
+  scale=0.9,
+  node distance=1.5cm and 2cm,
+  block/.style = {draw, fill=BoxFillColor, rectangle, minimum height=2.5em, minimum width=2.8em, rounded corners, font=\footnotesize, align=center, inner sep=5pt},
+  arrow/.style = {draw, -{Latex[length=2mm]}, thick},
+  dasharrow/.style = {draw, -{Latex[length=2mm]}, thick, densely dashed},
+  label/.style = {font=\footnotesize\itshape},
+]
+
+% ==================== TOP ROW: CLASSICAL ====================
+
+\node [block, fill=mDarkTeal!15] (sys1) {\textbf{System}};
+\node [block, fill=RoyalPurp!10, right=2.5cm of sys1] (luen1) {\textbf{Luenberger}\\ \textbf{Observer}};
+\node [right=1.5cm of luen1, font=\footnotesize\bfseries] (vhat1) {$\hat{V}$};
+\draw [arrow] (sys1) -- node[above, font=\footnotesize] {$y$} (luen1);
+\draw [arrow] (luen1) -- (vhat1);
+
+% Classical label
+\node [label, RoyalPurp, above=0.3cm of $(sys1.north)!0.5!(luen1.north)$] {Classical};
+
+% ==================== BOTTOM ROW: PROPOSED ====================
+
+\node [block, fill=mDarkTeal!15, below=2.2cm of sys1] (sys2) {\textbf{System}};
+\node [block, fill=orange!15, right=2.5cm of sys2] (homo) {\textbf{Homogeneous}\\\textbf{Observer}};
+\node [block, fill=RoyalPurp!10, right=3.8cm of homo] (luen2) {\textbf{Luenberger}\\ \textbf{Observer 2}};
+\node [right=1.5cm of luen2, font=\footnotesize\bfseries] (vhat2) {$\hat{V}$};
+
+% y from System → splits to Observer 1 AND Luenberger 2
+\coordinate (y-split) at ($(sys2.east)!0.55!(homo.west)$);
+\draw [arrow] (sys2) -- (y-split);
+
+% y → Observer 1 (straight)
+\draw [arrow] (y-split) -- node[above, font=\footnotesize] {$y$} (homo);
+
+% y → Luenberger 2 (above, bypassing Observer 1)
+\draw [arrow] (y-split) |- ($(luen2.north)+(0,0.6)$) -| node[font=\footnotesize, pos=0.45, above] {$y$} (luen2.north);
+
+% ẑ₂ = virtual output from Homogeneous Observer → Luenberger 2
+\draw [arrow] (homo) -- node[above, font=\footnotesize, align=center, yshift=2pt] {$\hat{z}_2$\\[-1pt]{\scriptsize virtual output}} (luen2);
+
+% V̂ output
+\draw [arrow] (luen2) -- (vhat2);
+
+% Proposed label
+\node [label, mDarkTeal, above=0.9cm of $(sys2.north)!0.5!(luen2.north)$] {Proposed};
+
+% ==================== DASHED BOX around Observer 1 ====================
+\begin{scope}[on background layer]
+  \node [draw=orange, densely dashed, rounded corners, inner sep=6pt,
+         fit=(homo),
+         label={[font=\footnotesize, orange]north west:{Reconstructs $\hat{z}_2$}}] {};
+\end{scope}
+
+\end{tikzpicture}
