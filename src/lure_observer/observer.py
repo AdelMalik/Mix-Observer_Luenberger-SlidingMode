@@ -1,8 +1,8 @@
 """Classical and combined Luenberger observers for Lur'e systems.
 
-  Classical:   dV̂/dt = A V̂ + W S(V̂) + B u + K (y − C V̂)
-  Combined:    dV̂/dt = A V̂ + W S(V̂) + B u + K(y−CV̂) − K'(CAV̂ + CWS(V̂) − y₂)
-               (general A)  or  − K'(CWS(V̂) − y₂)  (aligned, CA=MC)
+  Classical:   dV̂/dt = A V̂ + W f(V̂) + B u + K (y − C V̂)
+  Combined:    dV̂/dt = A V̂ + W f(V̂) + B u + K(y−CV̂) − K'(CAV̂ + CWf(V̂) − y₂)
+               (general A)  or  − K'(CWf(V̂) − y₂)  (aligned, CA=MC)
 """
 
 import numpy as np
@@ -20,7 +20,7 @@ def _rk4(f, x, dt, *args):
 class ClassicalObserver:
     """Standard Luenberger observer for a Lur'e system.
 
-    dV̂/dt = A V̂ + W S(V̂) + B u + K (y − C V̂)
+    dV̂/dt = A V̂ + W f(V̂) + B u + K (y − C V̂)
 
     Parameters
     ----------
@@ -28,19 +28,19 @@ class ClassicalObserver:
     B : (n, nu) array or None
     C : (ny, n) array
     K : (n, ny) array — from solve_lmi
-    S : callable — S(v) → array, component-wise nonlinearity
+    f : callable — nonlinearity f(v) → array
     """
 
-    def __init__(self, A, W, B, C, K, S):
+    def __init__(self, A, W, B, C, K, f):
         self.A, self.W = A, W
         self.B = B if B is not None else np.zeros((A.shape[0], 1))
-        self.C, self.K, self.S = C, K, S
+        self.C, self.K, self.f = C, K, f
 
     def _rhs(self, v_hat, u, y):
-        Sv = self.S(v_hat)
+        fv = self.f(v_hat)
         return (
             self.A @ v_hat
-            + self.W @ Sv
+            + self.W @ fv
             + self.B @ np.atleast_1d(u)
             + self.K @ (y - self.C @ v_hat)
         )
@@ -54,10 +54,10 @@ class CombinedObserver:
     """Combined observer with virtual-output injection.
 
     General A (aligned=False):
-      dV̂/dt = A V̂ + W S(V̂) + B u + K(y−CV̂) − K'(CAV̂ + CWS(V̂) − y₂)
+      dV̂/dt = A V̂ + W f(V̂) + B u + K(y−CV̂) − K'(CAV̂ + CWf(V̂) − y₂)
 
     Aligned, CA = MC (aligned=True):
-      dV̂/dt = A V̂ + W S(V̂) + B u + K(y−CV̂) − K'(CWS(V̂) − y₂)
+      dV̂/dt = A V̂ + W f(V̂) + B u + K(y−CV̂) − K'(CWf(V̂) − y₂)
 
     Parameters
     ----------
@@ -65,27 +65,27 @@ class CombinedObserver:
     B : (n, nu) array or None
     C : (ny, n) array
     K, Kprime : (n, ny) arrays — from solve_lmi
-    S : callable — S(v) → array
+    f : callable — nonlinearity f(v) → array
     aligned : bool
-        False → y₂ = CAV + CWS(V) (full reconstruction)
-        True  → y₂ = CWS(V) only (CAV = My known from output)
+        False → y₂ = CAV + CWf(V) (full reconstruction)
+        True  → y₂ = CWf(V) only (CAV = My known from output)
     """
 
-    def __init__(self, A, W, B, C, K, Kprime, S, *, aligned=False):
+    def __init__(self, A, W, B, C, K, Kprime, f, *, aligned=False):
         self.A, self.W = A, W
         self.B = B if B is not None else np.zeros((A.shape[0], 1))
-        self.C, self.K, self.Kprime, self.S = C, K, Kprime, S
+        self.C, self.K, self.Kprime, self.f = C, K, Kprime, f
         self.aligned = aligned
 
     def _rhs(self, v_hat, u, y, y2):
-        Sv = self.S(v_hat)
+        fv = self.f(v_hat)
         if self.aligned:
-            y2_pred = self.C @ (self.W @ Sv)              # CWS(V̂) only
+            y2_pred = self.C @ (self.W @ fv)              # CWf(V̂) only
         else:
-            y2_pred = self.C @ (self.A @ v_hat + self.W @ Sv)  # CAV̂ + CWS(V̂)
+            y2_pred = self.C @ (self.A @ v_hat + self.W @ fv)  # CAV̂ + CWf(V̂)
         return (
             self.A @ v_hat
-            + self.W @ Sv
+            + self.W @ fv
             + self.B @ np.atleast_1d(u)
             + self.K @ (y - self.C @ v_hat)
             - self.Kprime @ (y2_pred - y2)

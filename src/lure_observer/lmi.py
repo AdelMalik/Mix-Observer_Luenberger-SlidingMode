@@ -62,11 +62,11 @@ def solve_lmi(A, W, C, *,
         True  → optimises over K' (combined observer).
         False → K' = 0 (classical Luenberger observer).
     Gamma : (n, n) diagonal array or None
-        Sector bound: 0 ≤ S'ᵢ ≤ γᵢ. Required for mode="sector".
+        Sector bound: 0 ≤ f'ᵢ ≤ γᵢ. Required for mode="sector".
     aligned : bool or None
         If None, auto-detected via `is_aligned(A, C)`.
-        True  → CA = MC: y₂ = CWS(V) only, (1,1) block is P(A-KC).
-        False → general A: y₂ = CAV + CWS(V), (1,1) block is
+        True  → CA = MC: y₂ = CWf(V) only, (1,1) block is P(A-KC).
+        False → general A: y₂ = CAV + CWf(V), (1,1) block is
                 P((I-K'C)A - KC).
     Kprime_fixed : (n, ny) array or None
         If given, K' is fixed (e.g. Cᵀ(CCᵀ)⁻¹, the projector onto range(Cᵀ))

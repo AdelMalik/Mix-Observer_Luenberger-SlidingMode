@@ -40,7 +40,7 @@ for j in range(ny):
 # Sigmoid nonlinearity
 LAM_SIG = 4.0
 
-def S(v):
+def f(v):
     return 1.0 / (1.0 + np.exp(-LAM_SIG * np.clip(v, -30 / LAM_SIG, 30 / LAM_SIG)))
 
 # Sector bound: 0 ≤ S' ≤ LAM_SIG/4  →  Γ = (LAM_SIG/4) I
@@ -92,12 +92,12 @@ print(f"  Combined:   ||K|| = {np.linalg.norm(K_cmb):.1f}   ||K'|| = {np.linalg.
 
 # Build observers
 smo     = SlidingModeBank(ny, L_smo, A=A, C=C, dt=dt, n_sub=10)
-obs_std = ClassicalObserver(A, W_sw, None, C, K_std, S)
-obs_cmb = CombinedObserver(A, W_sw, None, C, K_cmb, Kp, S, aligned=True)
+obs_std = ClassicalObserver(A, W_sw, None, C, K_std, f)
+obs_cmb = CombinedObserver(A, W_sw, None, C, K_cmb, Kp, f, aligned=True)
 
 
 def plant_rhs(v, noise):
-    return A @ v + W_sw @ S(v) + noise
+    return A @ v + W_sw @ f(v) + noise
 
 
 def rk4_step(v, noise, dt):

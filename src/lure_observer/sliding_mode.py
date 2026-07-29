@@ -3,12 +3,12 @@
 Reconstructs y₂ from y in finite time via second-order sliding modes.
 
 For general A (aligned=False):
-  y₂ = CAV + CWS(V)        — full nonlinear output
+  y₂ = CAV + CWf(V)        — full nonlinear output
   ż̂₁ⱼ = ẑ₂ⱼ + [CBu]ⱼ + Lⱼ k₁ ⌈yⱼ − ẑ₁ⱼ⌋^{½}
   ż̂₂ⱼ ∈ Lⱼ² k₂ sign(yⱼ − ẑ₁ⱼ)
 
 For aligned CA = MC (aligned=True):
-  y₂ = CWS(V)              — CAV = My already known from output
+  y₂ = CWf(V)              — CAV = My already known from output
   ż̂₁ⱼ = [My]ⱼ + ẑ₂ⱼ + [CBu]ⱼ + Lⱼ k₁ ⌈yⱼ − ẑ₁ⱼ⌋^{½}
   ż̂₂ⱼ ∈ Lⱼ² k₂ sign(yⱼ − ẑ₁ⱼ)
 

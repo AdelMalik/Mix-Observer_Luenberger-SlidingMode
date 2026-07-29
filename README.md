@@ -43,7 +43,7 @@ import numpy as np
 A = ...       # (n,n)  — linear dynamics
 W = ...       # (n,n)  — nonlinear coupling
 C = ...       # (ny,n) — measurement matrix
-def S(v):     # component-wise nonlinearity
+def f(v):     # nonlinearity
     return 1 / (1 + np.exp(-v))
 
 Gamma = np.eye(n)   # sector bound (required for slope-bounded LMI)
@@ -54,7 +54,7 @@ print(f"||K|| = {np.linalg.norm(K):.1f},  ||K'|| = {np.linalg.norm(Kprime):.1f}"
 
 # 3. Build the observer
 smo = SlidingModeBank(ny=3, L=np.ones(3)*3, A=A, C=C, dt=1e-3)
-obs = CombinedObserver(A, W, None, C, K, Kprime, S)
+obs = CombinedObserver(A, W, None, C, K, Kprime, f)
 
 # 4. Run
 for t in ...:
