@@ -1,6 +1,6 @@
 # Combined LMI-Based Observer for Lur'e Systems
 
-> *"Observer design for Lur'e systems via injection of a reconstructed nonlinear output."*
+> *"Observer design for Lur'e-type systems via injection of a reconstructed nonlinear output."*
 
 ## Overview
 
@@ -104,4 +104,4 @@ Reproduces Case 3 from the article: Wilson-Cowan network ($n=6$, $n_y=3$), sigmo
 
 ## Reference
 
-Annabi, A.M. *"Observer design for Lur'e systems via injection of a reconstructed nonlinear output."* [arXiv:2606.24656](https://arxiv.org/abs/2606.24656).
+Annabi, A.M. *"Observer design for Lur'e-type systems via injection of a reconstructed nonlinear output."* [arXiv:2606.24656](https://arxiv.org/abs/2606.24656).
